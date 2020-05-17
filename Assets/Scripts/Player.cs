@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour {
     public float playerSpeed = 10f;
     public float sprintSpeed = 20f;
+    public float jumpVelocity = 4f;
 
     private bool isMoving = false;
     private bool isSprinting = false;
@@ -32,11 +33,23 @@ public class Player : MonoBehaviour {
     void FixedUpdate () {
         // calls the move method in a fixed update so the physics cannot change
         Move ();
+        if (Input.GetKey (KeyCode.LeftShift)) {
+            Sprint ();
+        }
+        if(Input.GetButtonDown("Jump")){
+            rigidPlayer.velocity = Vector3.up * jumpVelocity;
+        }
     }
 
     void Move () {
-        Vector3 yVelocityFix = new Vector3 (0, rigidPlayer.velocity.y, 0); //y axis velocity returns to normal since it was changed in the moveDirection vector3 variable
+        Vector3 yReset = new Vector3 (0, rigidPlayer.velocity.y, 0); //y axis velocity returns to normal since it was changed in the moveDirection vector3 variable
         rigidPlayer.velocity = moveDirection * playerSpeed * Time.deltaTime; //the actual movement in velocity
-        rigidPlayer.velocity += yVelocityFix; // adds the y axis vector3 velocity on top of the player's vector3 velocity which got set to 0 in moveDirection
+        rigidPlayer.velocity += yReset; // adds the y axis vector3 velocity on top of the player's vector3 velocity which got set to 0 in moveDirection
+    }
+    void Sprint () {
+        // same as move but for sprinting (left shift hold)
+        Vector3 yReset = new Vector3 (0, rigidPlayer.velocity.y, 0);
+        rigidPlayer.velocity = moveDirection * sprintSpeed * Time.deltaTime;
+        rigidPlayer.velocity += yReset;
     }
 }
